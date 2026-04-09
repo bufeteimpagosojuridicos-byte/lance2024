@@ -2,7 +2,7 @@
   "name": "ObraControl GPS - Construcciones Lance 2024",
   "short_name": "Lance GPS",
   "description": "App de fichaje GPS para operarios",
-  "start_url": "/lance2024-control/lance-operario-v3.html",
+  "start_url": "/lance2024/lance-operario-v3.html",
   "display": "standalone",
   "background_color": "#0A1628",
   "theme_color": "#1B4F8C",
