@@ -286,7 +286,7 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
       <div class="sb-lbl">Principal</div>
       <div class="nav-item active" onclick="showPage('dashboard')" id="ni-dashboard">
         <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
-        Dashboard
+        Tablero
       </div>
       <div class="nav-item" onclick="showPage('jornada')" id="ni-jornada">
         <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M5 1v2m6-2v2M2 6h12"/></svg>
@@ -348,7 +348,7 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
 
   <div class="main-content">
     <div class="topbar">
-      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-title" id="topbar-title">Tablero</div>
       <div class="topbar-right">
         <div class="live-pill"><div class="live-dot"></div>EN VIVO</div>
         <div id="fb-live-badge" style="font-size:10px;color:var(--green);font-weight:600;display:none;"></div>
@@ -359,30 +359,66 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="kpi-grid">
-        <div class="kpi-card kc-blue">
+        <div class="kpi-card kc-blue" onclick="showPage('operarios')" style="cursor:pointer">
           <div class="kpi-header"><span class="kpi-label">Operarios</span><div class="kpi-icon"><svg fill="none" stroke="var(--blue2)" stroke-width="1.8" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg></div></div>
           <div class="kpi-val" id="kv-total">0</div>
           <div class="kpi-sub">Plantilla completa</div>
           <div class="kpi-trend t-up">↑ Equipo al completo</div>
         </div>
-        <div class="kpi-card kc-green">
+        <div class="kpi-card kc-green" onclick="showPage('jornada')" style="cursor:pointer">
           <div class="kpi-header"><span class="kpi-label">En obra · GPS</span><div class="kpi-icon"><svg fill="none" stroke="var(--green)" stroke-width="1.8" viewBox="0 0 16 16"><circle cx="8" cy="6" r="2.5"/><path d="M8 2C5.8 2 4 3.8 4 6c0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z"/></svg></div></div>
           <div class="kpi-val" id="kv-in">0</div>
           <div class="kpi-sub">Dentro de zona · 150m</div>
           <div class="kpi-trend t-up">↑ En zona</div>
         </div>
-        <div class="kpi-card kc-red">
+        <div class="kpi-card kc-red" onclick="showPage('alertas')" style="cursor:pointer">
           <div class="kpi-header"><span class="kpi-label">Alertas</span><div class="kpi-icon"><svg fill="none" stroke="var(--red)" stroke-width="1.8" viewBox="0 0 16 16"><path d="M8 1C5.8 1 4 2.8 4 5v5l-1 1.5h10L12 10V5c0-2.2-1.8-4-4-4z"/><path d="M6.5 13.5a1.5 1.5 0 003 0"/></svg></div></div>
           <div class="kpi-val" id="kv-alerts">0</div>
           <div class="kpi-sub">Requieren atención</div>
           <div class="kpi-trend t-dn">↓ 2 críticas · 1 aviso</div>
         </div>
-        <div class="kpi-card kc-purple">
+        <div class="kpi-card kc-purple" onclick="showPage('extras')" style="cursor:pointer">
           <div class="kpi-header"><span class="kpi-label">Horas extras hoy</span><div class="kpi-icon" style="background:var(--purple-l)"><svg fill="none" stroke="var(--purple)" stroke-width="1.8" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg></div></div>
           <div class="kpi-val" id="kv-extras">0</div>
           <div class="kpi-sub">Horas extra acumuladas</div>
           <div class="kpi-trend t-ne">≈ Fuera de jornada</div>
         </div>
+      </div>
+
+      <!-- BOTONES DE ACCESO RÁPIDO -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+        <button onclick="showPage('jornada')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--blue2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">📅</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">JORNADA</div>
+        </button>
+        <button onclick="showPage('operarios')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--blue2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">👷</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">OPERARIOS</div>
+        </button>
+        <button onclick="showPage('tareas')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--blue2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">📋</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">TAREAS</div>
+        </button>
+        <button onclick="showPage('gestion')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--blue2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">➕</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">ALTA</div>
+        </button>
+        <button onclick="showPage('horas')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--blue2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">⏱</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">HORAS</div>
+        </button>
+        <button onclick="showPage('whatsapp')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='#25d366';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">💬</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">WHATSAPP</div>
+        </button>
+        <button onclick="showPage('extras')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--purple)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">🕐</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">EXTRAS</div>
+        </button>
+        <button onclick="showPage('asistente')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--orange)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">🤖</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">ASISTENTE</div>
+        </button>
       </div>
 
       <!-- Jornada info -->
@@ -961,7 +997,7 @@ function tick(){
 setInterval(tick,1000); tick();
 
 // ── PAGES ──
-const TITLES={dashboard:'Dashboard',jornada:'Resumen de jornada',operarios:'Operarios',alertas:'Alertas',extras:'Horas extras',horas:'Horas trabajadas',tareas:'Tareas',whatsapp:'WhatsApp',gestion:'Alta de operarios',asistente:'Asistente IA'};
+const TITLES={dashboard:'Tablero',jornada:'Resumen de jornada',operarios:'Operarios',alertas:'Alertas',extras:'Horas extras',horas:'Horas trabajadas',tareas:'Tareas',whatsapp:'WhatsApp',gestion:'Alta de operarios',asistente:'Asistente IA'};
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
