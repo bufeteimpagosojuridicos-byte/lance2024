@@ -592,7 +592,7 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
                 <label class="form-lbl">PIN asignado por empresa</label>
                 <div style="display:flex;gap:6px;align-items:center;">
                   <input class="form-ctrl" id="g-pin" type="text" maxlength="4" placeholder="4 dígitos" style="letter-spacing:4px;font-family:'Montserrat',sans-serif;font-size:16px;font-weight:700;flex:1;">
-                  <button type="button" onclick="document.getElementById('g-pin').value=String(Math.floor(1000+Math.random()*9000))" style="padding:10px 12px;background:var(--blue-light);border:1px solid var(--border2);border-radius:9px;cursor:pointer;font-size:14px;" title="Generar nuevo PIN">🔄</button>
+                  <button type="button" onclick="generarPinUnico()" style="padding:10px 12px;background:var(--blue-light);border:1px solid var(--border2);border-radius:9px;cursor:pointer;font-size:14px;" title="Generar nuevo PIN">🔄</button>
                 </div>
               </div>
               <div class="form-g">
@@ -1176,6 +1176,23 @@ function saveWorker(){
   if(!dni&&!nie){ showToast('Introduce DNI o NIE','err'); return; }
   if(pin.length!==4||isNaN(pin)){ showToast('El PIN debe tener exactamente 4 dígitos','err'); return; }
 
+  // Validar PIN duplicado
+  const pinDup = WORKERS.find(w=> w.pin===pin && w.id!=id);
+  if(pinDup){
+    showToast(`❌ PIN ${pin} ya asignado a ${pinDup.nombre} ${pinDup.apellidos}. Genera otro.`,'err');
+    return;
+  }
+
+  // Validar DNI/NIE duplicado
+  if(dni){
+    const dniDup = WORKERS.find(w=> w.dni && w.dni.toUpperCase()===dni && w.id!=id);
+    if(dniDup){ showToast(`❌ DNI ${dni} ya registrado para ${dniDup.nombre} ${dniDup.apellidos}`,'err'); return; }
+  }
+  if(nie){
+    const nieDup = WORKERS.find(w=> w.nie && w.nie.toUpperCase()===nie && w.id!=id);
+    if(nieDup){ showToast(`❌ NIE ${nie} ya registrado para ${nieDup.nombre} ${nieDup.apellidos}`,'err'); return; }
+  }
+
   if(id){
     const w=WORKERS.find(w=>w.id==id);
     if(w){ Object.assign(w,{nombre,apellidos,dni,nie,tel,obra,pin,status}); fbSyncWorker(w); }
@@ -1253,8 +1270,12 @@ function resetForm(){
   ['g-nombre','g-apellidos','g-dni','g-nie','g-tel','g-pin','g-obra'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
-  // Generar PIN automático de 4 dígitos
-  const autoPin = String(Math.floor(1000+Math.random()*9000));
+  // Generar PIN automático de 4 dígitos — sin duplicados
+  let autoPin;
+  const usedPins = WORKERS.map(w=>w.pin);
+  do {
+    autoPin = String(Math.floor(1000+Math.random()*9000));
+  } while(usedPins.includes(autoPin));
   document.getElementById('g-pin').value = autoPin;
   document.getElementById('g-status').value='pending';
   document.getElementById('g-btn').textContent='+ Dar de alta';
@@ -1265,6 +1286,16 @@ function resetForm(){
 }
 
 // ── WHATSAPP ALTA ──
+function generarPinUnico(){
+  const usedPins = WORKERS.map(w=>w.pin);
+  let pin;
+  do {
+    pin = String(Math.floor(1000+Math.random()*9000));
+  } while(usedPins.includes(pin));
+  document.getElementById('g-pin').value = pin;
+  showToast(`🔐 PIN ${pin} generado (no duplicado)`,'ok');
+}
+
 const APP_URL = 'https://obracontrolgps.net/lance-operario-v3.html';
 let lastWorkerAdded = null;
 
