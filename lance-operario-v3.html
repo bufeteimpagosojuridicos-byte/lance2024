@@ -399,6 +399,44 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
 </div>
 
 <!-- ══════════════════════════════
+     SCREEN: LICENCIA BLOQUEADA
+══════════════════════════════ -->
+<div class="screen hidden" id="s-blocked">
+  <div style="text-align:center;max-width:310px;">
+    <div style="font-size:64px;margin-bottom:16px;">🔒</div>
+    <div style="font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:var(--red);margin-bottom:10px;">APP BLOQUEADA</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:24px;">
+      La licencia de esta aplicación ha caducado o no está activa.<br><br>
+      Contacte con <strong style="color:var(--text)">ObraControl GPS</strong> para renovar su suscripción.
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">📞 Contacto:</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);">Juan Manuel Pedrosa</div>
+      <div style="font-size:12px;color:var(--blue3);">pedrosaborrego@gmail.com</div>
+      <div style="font-size:12px;color:var(--blue3);">+34 609 321 585</div>
+    </div>
+    <button class="btn-main" onclick="goTo('s-license')" style="background:var(--orange);">🔑 Introducir clave de licencia</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN: INTRODUCIR LICENCIA
+══════════════════════════════ -->
+<div class="screen hidden" id="s-license">
+  <div style="text-align:center;max-width:310px;">
+    <div style="font-size:48px;margin-bottom:12px;">🔑</div>
+    <div style="font-family:'Montserrat',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px;">Activar licencia</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">Introduce la clave de licencia proporcionada por ObraControl GPS</div>
+    <div class="form-group">
+      <input class="form-inp" id="license-input" type="text" placeholder="Ej: LANCE-2024-0001" autocomplete="off" style="text-transform:uppercase;letter-spacing:2px;font-weight:700;text-align:center;font-size:16px;">
+    </div>
+    <div id="license-msg" style="height:18px;text-align:center;font-size:11px;font-weight:700;color:var(--red);margin-bottom:8px;font-family:'Montserrat',sans-serif;"></div>
+    <button class="btn-main" onclick="verifyLicense()">Verificar licencia →</button>
+    <button class="btn-sec" onclick="goTo('s-blocked')">← Volver</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
      SCREEN 1: IDIOMA
 ══════════════════════════════ -->
 <div class="screen" id="s-lang">
@@ -1647,30 +1685,100 @@ function logout(){
 }
 
 
+// ── SISTEMA DE LICENCIAS ──
+function checkLicense(){
+  // Primero comprobar si hay licencia guardada localmente
+  const savedLicense = localStorage.getItem('lance_license');
+  if(savedLicense){
+    // Verificar en Firebase que sigue activa
+    return fetch(`${FB_URL}/licencias/${savedLicense}.json`)
+      .then(r=>r.json())
+      .then(data=>{
+        if(!data || !data.activa) return false;
+        // Comprobar fecha de caducidad
+        if(data.caducidad){
+          const hoy = new Date().toISOString().split('T')[0];
+          if(hoy > data.caducidad) return false;
+        }
+        return true;
+      })
+      .catch(()=>true); // Sin conexión, dejar pasar si tiene licencia guardada
+  }
+  return Promise.resolve(false);
+}
+
+function verifyLicense(){
+  const input = document.getElementById('license-input');
+  const msg = document.getElementById('license-msg');
+  const key = (input.value||'').trim().toUpperCase();
+  if(!key){ msg.textContent='Introduce una clave de licencia'; return; }
+  msg.textContent='🔄 Verificando...';
+  msg.style.color='var(--blue3)';
+  
+  fetch(`${FB_URL}/licencias/${key}.json`)
+    .then(r=>r.json())
+    .then(data=>{
+      if(!data){
+        msg.style.color='var(--red)';
+        msg.textContent='❌ Clave no encontrada';
+        return;
+      }
+      if(!data.activa){
+        msg.style.color='var(--red)';
+        msg.textContent='❌ Licencia desactivada — Contacte con ObraControl GPS';
+        return;
+      }
+      if(data.caducidad){
+        const hoy = new Date().toISOString().split('T')[0];
+        if(hoy > data.caducidad){
+          msg.style.color='var(--red)';
+          msg.textContent=`❌ Licencia caducada el ${data.caducidad}`;
+          return;
+        }
+      }
+      // Licencia válida
+      localStorage.setItem('lance_license', key);
+      localStorage.setItem('lance_empresa', data.empresa||'');
+      showToast(`✅ Licencia activada — ${data.empresa||key}`,'ok');
+      goTo('s-lang');
+    })
+    .catch(()=>{
+      msg.style.color='var(--red)';
+      msg.textContent='⚠️ Sin conexión — no se puede verificar';
+    });
+}
+
 // ── SPLASH SCREEN ──
 window.addEventListener('load',()=>{
   setTimeout(()=>{
     const splash=document.getElementById('s-splash');
     if(splash){ splash.classList.add('fade-out'); setTimeout(()=>splash.style.display='none',650); }
-    // Intentar restaurar sesión guardada
-    if(restoreSession()){
-      // Sesión restaurada — ir directo a la app
-      document.getElementById('worker-badge').textContent = '👷 '+workerName;
-      if(isIn){
-        const btn=document.getElementById('checkin-btn');
-        btn.classList.add('in');
-        btn.style.borderColor='var(--red)';
-        btn.style.background='rgba(255,71,87,.07)';
-        document.getElementById('cb-label').innerHTML=t('checkout').replace('\n','<br>');
-        document.getElementById('cb-icon').textContent='🔴';
+    
+    // Verificar licencia antes de todo
+    checkLicense().then(valid=>{
+      if(!valid){
+        goTo('s-blocked');
+        return;
       }
-      goTo('s-app');
-      applyAppLang();
-      renderTasks();
-      startClock();
-      startGPS();
-      showToast(`👋 Bienvenido ${workerName.split(' ')[0]}`,'ok');
-    }
+      // Licencia OK — intentar restaurar sesión
+      if(restoreSession()){
+        document.getElementById('worker-badge').textContent = '👷 '+workerName;
+        if(isIn){
+          const btn=document.getElementById('checkin-btn');
+          btn.classList.add('in');
+          btn.style.borderColor='var(--red)';
+          btn.style.background='rgba(255,71,87,.07)';
+          document.getElementById('cb-label').innerHTML=t('checkout').replace('\n','<br>');
+          document.getElementById('cb-icon').textContent='🔴';
+        }
+        goTo('s-app');
+        applyAppLang();
+        renderTasks();
+        startClock();
+        startGPS();
+        showToast(`👋 Bienvenido ${workerName.split(' ')[0]}`,'ok');
+      }
+    });
   },2800);
 });
 
