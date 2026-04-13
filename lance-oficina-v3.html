@@ -237,6 +237,29 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
 <body>
 
 <!-- LOGIN -->
+<!-- PANTALLA BLOQUEADA -->
+<div id="blocked-screen" style="display:none;position:fixed;inset:0;z-index:200;background:linear-gradient(135deg,#0A1628 0%,#1B3A6B 50%,#0A1628 100%);display:none;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:rgba(255,255,255,.97);border-radius:24px;padding:40px 36px;width:100%;max-width:440px;box-shadow:0 32px 80px rgba(0,0,0,.4);text-align:center;">
+    <div style="font-size:64px;margin-bottom:16px;">🔒</div>
+    <div style="font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;color:#DC2626;margin-bottom:10px;">CONSOLA BLOQUEADA</div>
+    <div style="font-size:13px;color:#4A6080;line-height:1.6;margin-bottom:24px;">
+      La licencia de esta aplicación ha caducado o no está activa.<br><br>
+      Contacte con <strong>ObraControl GPS</strong> para renovar su suscripción.
+    </div>
+    <div style="background:#F4F7FC;border:1px solid #E2EAF4;border-radius:12px;padding:16px;margin-bottom:16px;">
+      <div style="font-size:11px;color:#8FA5C0;margin-bottom:8px;">📞 Contacto:</div>
+      <div style="font-size:14px;font-weight:700;color:#1A2840;">Juan Manuel Pedrosa</div>
+      <div style="font-size:12px;color:#2563AE;">pedrosaborrego@gmail.com</div>
+      <div style="font-size:12px;color:#2563AE;">+34 609 321 585</div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <input id="office-license-input" type="text" placeholder="Clave de licencia" style="width:100%;padding:12px;border:1.5px solid #E2EAF4;border-radius:9px;font-size:14px;text-align:center;text-transform:uppercase;letter-spacing:2px;font-weight:700;outline:none;">
+    </div>
+    <div id="office-license-msg" style="height:18px;font-size:11px;font-weight:700;color:#DC2626;margin-bottom:8px;font-family:'Montserrat',sans-serif;"></div>
+    <button onclick="verifyOfficeLicense()" style="width:100%;padding:12px;background:#E8621A;color:#fff;border:none;border-radius:9px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;">🔑 Activar licencia</button>
+  </div>
+</div>
+
 <div id="login-screen">
   <div class="login-card">
     <svg class="login-logo-svg" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
@@ -286,7 +309,7 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
       <div class="sb-lbl">Principal</div>
       <div class="nav-item active" onclick="showPage('dashboard')" id="ni-dashboard">
         <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
-        Dashboard
+        Tablero
       </div>
       <div class="nav-item" onclick="showPage('jornada')" id="ni-jornada">
         <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M5 1v2m6-2v2M2 6h12"/></svg>
@@ -348,7 +371,7 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
 
   <div class="main-content">
     <div class="topbar">
-      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-title" id="topbar-title">Tablero</div>
       <div class="topbar-right">
         <div class="live-pill"><div class="live-dot"></div>EN VIVO</div>
         <div id="fb-live-badge" style="font-size:10px;color:var(--green);font-weight:600;display:none;"></div>
@@ -359,30 +382,66 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="kpi-grid">
-        <div class="kpi-card kc-blue">
+        <div class="kpi-card kc-blue" onclick="showPage('operarios')" style="cursor:pointer">
           <div class="kpi-header"><span class="kpi-label">Operarios</span><div class="kpi-icon"><svg fill="none" stroke="var(--blue2)" stroke-width="1.8" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg></div></div>
           <div class="kpi-val" id="kv-total">0</div>
           <div class="kpi-sub">Plantilla completa</div>
           <div class="kpi-trend t-up">↑ Equipo al completo</div>
         </div>
-        <div class="kpi-card kc-green">
+        <div class="kpi-card kc-green" onclick="showPage('jornada')" style="cursor:pointer">
           <div class="kpi-header"><span class="kpi-label">En obra · GPS</span><div class="kpi-icon"><svg fill="none" stroke="var(--green)" stroke-width="1.8" viewBox="0 0 16 16"><circle cx="8" cy="6" r="2.5"/><path d="M8 2C5.8 2 4 3.8 4 6c0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z"/></svg></div></div>
           <div class="kpi-val" id="kv-in">0</div>
           <div class="kpi-sub">Dentro de zona · 150m</div>
           <div class="kpi-trend t-up">↑ En zona</div>
         </div>
-        <div class="kpi-card kc-red">
+        <div class="kpi-card kc-red" onclick="showPage('alertas')" style="cursor:pointer">
           <div class="kpi-header"><span class="kpi-label">Alertas</span><div class="kpi-icon"><svg fill="none" stroke="var(--red)" stroke-width="1.8" viewBox="0 0 16 16"><path d="M8 1C5.8 1 4 2.8 4 5v5l-1 1.5h10L12 10V5c0-2.2-1.8-4-4-4z"/><path d="M6.5 13.5a1.5 1.5 0 003 0"/></svg></div></div>
           <div class="kpi-val" id="kv-alerts">0</div>
           <div class="kpi-sub">Requieren atención</div>
           <div class="kpi-trend t-dn">↓ 2 críticas · 1 aviso</div>
         </div>
-        <div class="kpi-card kc-purple">
+        <div class="kpi-card kc-purple" onclick="showPage('extras')" style="cursor:pointer">
           <div class="kpi-header"><span class="kpi-label">Horas extras hoy</span><div class="kpi-icon" style="background:var(--purple-l)"><svg fill="none" stroke="var(--purple)" stroke-width="1.8" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg></div></div>
           <div class="kpi-val" id="kv-extras">0</div>
           <div class="kpi-sub">Horas extra acumuladas</div>
           <div class="kpi-trend t-ne">≈ Fuera de jornada</div>
         </div>
+      </div>
+
+      <!-- BOTONES DE ACCESO RÁPIDO -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+        <button onclick="showPage('jornada')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--blue2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">📅</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">JORNADA</div>
+        </button>
+        <button onclick="showPage('operarios')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--blue2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">👷</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">OPERARIOS</div>
+        </button>
+        <button onclick="showPage('tareas')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--blue2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">📋</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">TAREAS</div>
+        </button>
+        <button onclick="showPage('gestion')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--blue2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">➕</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">ALTA</div>
+        </button>
+        <button onclick="showPage('horas')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--blue2)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">⏱</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">HORAS</div>
+        </button>
+        <button onclick="showPage('whatsapp')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='#25d366';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">💬</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">WHATSAPP</div>
+        </button>
+        <button onclick="showPage('extras')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--purple)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">🕐</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">EXTRAS</div>
+        </button>
+        <button onclick="showPage('asistente')" style="padding:14px 10px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .18s;box-shadow:var(--shadow);" onmouseover="this.style.borderColor='var(--orange)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="font-size:24px;margin-bottom:6px;">🤖</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--text);letter-spacing:.5px;">ASISTENTE</div>
+        </button>
       </div>
 
       <!-- Jornada info -->
@@ -592,7 +651,7 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
                 <label class="form-lbl">PIN asignado por empresa</label>
                 <div style="display:flex;gap:6px;align-items:center;">
                   <input class="form-ctrl" id="g-pin" type="text" maxlength="4" placeholder="4 dígitos" style="letter-spacing:4px;font-family:'Montserrat',sans-serif;font-size:16px;font-weight:700;flex:1;">
-                  <button type="button" onclick="document.getElementById('g-pin').value=String(Math.floor(1000+Math.random()*9000))" style="padding:10px 12px;background:var(--blue-light);border:1px solid var(--border2);border-radius:9px;cursor:pointer;font-size:14px;" title="Generar nuevo PIN">🔄</button>
+                  <button type="button" onclick="generarPinUnico()" style="padding:10px 12px;background:var(--blue-light);border:1px solid var(--border2);border-radius:9px;cursor:pointer;font-size:14px;" title="Generar nuevo PIN">🔄</button>
                 </div>
               </div>
               <div class="form-g">
@@ -601,6 +660,18 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
                   <option value="pending">⏳ Sin fichar</option>
                   <option value="in">✅ En obra</option>
                 </select>
+              </div>
+            </div>
+
+            <div class="form-g">
+              <label class="form-lbl">📱 Sistema operativo del móvil</label>
+              <div style="display:flex;gap:8px;">
+                <button type="button" id="so-android" onclick="selectSO('android')" style="flex:1;padding:12px;background:rgba(56,224,123,.08);border:2px solid var(--green);border-radius:10px;cursor:pointer;text-align:center;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--green);">
+                  🤖 Android
+                </button>
+                <button type="button" id="so-iphone" onclick="selectSO('iphone')" style="flex:1;padding:12px;background:var(--card);border:2px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--text3);">
+                  🍎 iPhone
+                </button>
               </div>
             </div>
 
@@ -653,10 +724,6 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
       </div>
     </div>
 
-  </div><!-- /main-content -->
-</div><!-- /app -->
-
-<!-- MODAL WP -->
     <!-- ASISTENTE IA -->
     <div class="page" id="page-asistente">
       <div style="max-width:700px;margin:0 auto;">
@@ -680,7 +747,6 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
             <input class="form-ctrl" id="chat-input" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter') sendChat()" style="flex:1;">
             <button onclick="sendChat()" style="padding:10px 16px;background:var(--blue2);color:#fff;border:none;border-radius:9px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Enviar</button>
           </div>
-          <!-- Acciones rápidas -->
           <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;">
             <button onclick="quickChat('¿Quién no ha fichado hoy?')" style="padding:6px 12px;background:var(--bg);border:1px solid var(--border);border-radius:20px;font-size:11px;cursor:pointer;color:var(--text2);">¿Quién no fichó?</button>
             <button onclick="quickChat('¿Cuántos están en obra?')" style="padding:6px 12px;background:var(--bg);border:1px solid var(--border);border-radius:20px;font-size:11px;cursor:pointer;color:var(--text2);">¿Cuántos en obra?</button>
@@ -714,6 +780,86 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
 <div class="toast" id="toast"></div>
 
 <script>
+// ── SISTEMA DE LICENCIAS — CONSOLA OFICINA ──
+const FB_URL_LICENSE = 'https://lance-a99b4-default-rtdb.europe-west1.firebasedatabase.app';
+
+function checkOfficeLicense(){
+  const savedLicense = localStorage.getItem('lance_office_license');
+  if(!savedLicense){
+    showBlockedScreen();
+    return;
+  }
+  fetch(`${FB_URL_LICENSE}/licencias/${savedLicense}.json`)
+    .then(r=>r.json())
+    .then(data=>{
+      if(!data || !data.activa){
+        showBlockedScreen();
+        return;
+      }
+      if(data.caducidad){
+        const hoy = new Date().toISOString().split('T')[0];
+        if(hoy > data.caducidad){
+          showBlockedScreen();
+          return;
+        }
+      }
+      // Licencia OK — mostrar login normal
+      document.getElementById('blocked-screen').style.display='none';
+      document.getElementById('login-screen').style.display='flex';
+    })
+    .catch(()=>{
+      // Sin conexión — dejar pasar si tiene licencia guardada
+      document.getElementById('blocked-screen').style.display='none';
+      document.getElementById('login-screen').style.display='flex';
+    });
+}
+
+function showBlockedScreen(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('blocked-screen').style.display='flex';
+}
+
+function verifyOfficeLicense(){
+  const input = document.getElementById('office-license-input');
+  const msg = document.getElementById('office-license-msg');
+  const key = (input.value||'').trim().toUpperCase();
+  if(!key){ msg.textContent='Introduce una clave de licencia'; return; }
+  msg.textContent='🔄 Verificando...';
+  msg.style.color='#2563AE';
+  
+  fetch(`${FB_URL_LICENSE}/licencias/${key}.json`)
+    .then(r=>r.json())
+    .then(data=>{
+      if(!data){
+        msg.style.color='#DC2626';
+        msg.textContent='❌ Clave no encontrada';
+        return;
+      }
+      if(!data.activa){
+        msg.style.color='#DC2626';
+        msg.textContent='❌ Licencia desactivada';
+        return;
+      }
+      if(data.caducidad){
+        const hoy = new Date().toISOString().split('T')[0];
+        if(hoy > data.caducidad){
+          msg.style.color='#DC2626';
+          msg.textContent=`❌ Licencia caducada el ${data.caducidad}`;
+          return;
+        }
+      }
+      localStorage.setItem('lance_office_license', key);
+      document.getElementById('blocked-screen').style.display='none';
+      document.getElementById('login-screen').style.display='flex';
+    })
+    .catch(()=>{
+      msg.style.color='#DC2626';
+      msg.textContent='⚠️ Sin conexión';
+    });
+}
+
+// Verificar licencia al cargar
+document.addEventListener('DOMContentLoaded', checkOfficeLicense);
 // ── JORNADA ──
 const JORNADA = {
   'Lunes':    {t1s:'08:00',t1e:'13:00',t2s:'14:00',t2e:'18:00',total:9},
@@ -725,71 +871,69 @@ const JORNADA = {
 const DAYS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 const DAYS_CAP=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 
-// ── WORKERS DATA ──
-let WORKERS = [
-  {id:1,nombre:'Andrei',apellidos:'Popescu',    dni:'',  nie:'X1234567A',obra:'Obra A · Calle Major 45, Lleida',    pin:'1234',status:'in',     arrival:'07:45',dep:null,   dist:12,  h:7.5,extras:0},
-  {id:2,nombre:'Mohamed',apellidos:'Amine',     dni:'',  nie:'X2345678B',obra:'Obra A · Calle Major 45, Lleida',    pin:'2345',status:'in',     arrival:'08:00',dep:null,   dist:28,  h:7.2,extras:0},
-  {id:3,nombre:'Ioan',   apellidos:'Stoica',    dni:'',  nie:'X3456789C',obra:'Obra B · Avda. Prat de la Riba, Lleida',pin:'3456',status:'in',  arrival:'07:50',dep:null,   dist:45,  h:7.4,extras:0},
-  {id:4,nombre:'Carlos', apellidos:'Méndez',   dni:'12345678A',nie:'',obra:'Obra A · Calle Major 45, Lleida',       pin:'4567',status:'in',     arrival:'07:30',dep:null,   dist:60,  h:7.8,extras:0},
-  {id:5,nombre:'Petre',  apellidos:'Dinu',      dni:'',  nie:'X5678901E',obra:'Obra B · Avda. Prat de la Riba, Lleida',pin:'5678',status:'out', arrival:'07:55',dep:'14:30',dist:820, h:6.5,extras:0},
-  {id:6,nombre:'Younes', apellidos:'Khalil',    dni:'',  nie:'X6789012F',obra:'Obra A · Calle Major 45, Lleida',    pin:'6789',status:'in',     arrival:'07:40',dep:null,   dist:5,   h:7.6,extras:0},
-  {id:7,nombre:'Vasile', apellidos:'Munteanu',  dni:'',  nie:'X7890123G',obra:'Obra C · Carrer Sant Joan, Lleida',  pin:'7890',status:'in',     arrival:'08:05',dep:null,   dist:38,  h:7.1,extras:0},
-  {id:8,nombre:'Said',   apellidos:'Bouhssine', dni:'',  nie:'X8901234H',obra:'Obra A · Calle Major 45, Lleida',    pin:'8901',status:'pending',arrival:null,   dep:null,   dist:null,h:0,  extras:0},
-  {id:9,nombre:'Luis',apellidos:'Campaña',dni:'98765432B',nie:'',obra:'',pin:'9999',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:10,nombre:'ABOUBACAR',apellidos:'COULIBAL',dni:'',nie:'Z2227297M',obra:'',pin:'1001',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:11,nombre:'SAMBALI',apellidos:'SIDIBE',dni:'',nie:'Z2087681E',obra:'',pin:'1002',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:12,nombre:'MARINO',apellidos:'ARTURO CARBONERO MARIN',dni:'',nie:'Z2905816R',obra:'',pin:'1003',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:13,nombre:'YOUNIU',apellidos:'BA',dni:'',nie:'Z1389355E',obra:'',pin:'1004',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:14,nombre:'MOCTAR',apellidos:'DIALLO',dni:'',nie:'Z2432344F',obra:'',pin:'1005',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:15,nombre:'MIGUEL',apellidos:'ANTONIO DELGADO MOGOLLON',dni:'',nie:'Z0775871V',obra:'',pin:'1006',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:16,nombre:'MADI',apellidos:'OUEDRAOGO',dni:'',nie:'Z2541738J',obra:'',pin:'1007',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:17,nombre:'MOCTAR',apellidos:'DIALLO',dni:'',nie:'Z2885247V',obra:'',pin:'1008',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:18,nombre:'MOUSSA',apellidos:'MARIKO',dni:'',nie:'Z2496017Q',obra:'',pin:'1009',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:19,nombre:'ADAMA',apellidos:'MAGASSOUBA',dni:'',nie:'Z3025175J',obra:'',pin:'1010',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:20,nombre:'BIRAIMA',apellidos:'DEMBELE',dni:'',nie:'Z3132159R',obra:'',pin:'1011',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:21,nombre:'ABDOULAYE',apellidos:'SAMOURA',dni:'',nie:'Z2464767T',obra:'',pin:'1012',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:22,nombre:'MAMADOU',apellidos:'DRAME',dni:'',nie:'Z3496134R',obra:'',pin:'1013',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:23,nombre:'ENRIQUE',apellidos:'BERBMUDEZ MUÑOZ',dni:'74886842S',nie:'',obra:'',pin:'1014',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:24,nombre:'ANTONIA',apellidos:'SANCHEZ RAMIREZ',dni:'48861968D',nie:'',obra:'',pin:'1015',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:25,nombre:'CHERIF',apellidos:'CHAKA',dni:'',nie:'X5710001K',obra:'',pin:'1016',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:26,nombre:'OUSMANE',apellidos:'SAMASSA',dni:'',nie:'Z2465081S',obra:'',pin:'1017',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:27,nombre:'CLAUDIOMAR',apellidos:'SALVINO LARANJEIRA',dni:'',nie:'Y7972853D',obra:'',pin:'1018',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:28,nombre:'MALLE',apellidos:'SUMARE',dni:'',nie:'X6747550V',obra:'',pin:'1019',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:29,nombre:'MAHAMADOU',apellidos:'DEMBELE',dni:'',nie:'Z1151223D',obra:'',pin:'1020',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:30,nombre:'MOHAMED',apellidos:'MESSATY',dni:'',nie:'X4052512G',obra:'',pin:'1021',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:31,nombre:'AHMED',apellidos:'KAOUCH',dni:'',nie:'X4136902F',obra:'',pin:'1022',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:32,nombre:'MOUSTAPHA',apellidos:'EL JABOUKI',dni:'',nie:'X7053778T',obra:'',pin:'1023',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:33,nombre:'SISSOKO',apellidos:'MAKAN',dni:'',nie:'Y0080376M',obra:'',pin:'1024',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:34,nombre:'KANDIA',apellidos:'MADY DANSOKO',dni:'',nie:'Z2228046H',obra:'',pin:'1025',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:35,nombre:'SEGA',apellidos:'KANOUTE',dni:'',nie:'Z2602977A',obra:'',pin:'1026',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:36,nombre:'HAMID',apellidos:'BENOUABI',dni:'',nie:'X4038559N',obra:'',pin:'1027',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:37,nombre:'SOUNKAROU',apellidos:'SISSAKO',dni:'',nie:'Z2079444L',obra:'',pin:'1028',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:38,nombre:'SALIFOU',apellidos:'KANOUTE',dni:'',nie:'Z2769445C',obra:'',pin:'1029',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:39,nombre:'ANTONIO',apellidos:'DIEZ MARTIN',dni:'52867906Z',nie:'',obra:'',pin:'1030',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:40,nombre:'ATOU',apellidos:'MBAYE',dni:'',nie:'X5911602G',obra:'',pin:'1031',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:41,nombre:'MOUHANMADOU',apellidos:'LAMINOU',dni:'',nie:'X6848064K',obra:'',pin:'1032',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:42,nombre:'SAMBA',apellidos:'DIAWARA',dni:'',nie:'X7499375H',obra:'',pin:'1033',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:43,nombre:'IBRAHIMA',apellidos:'FALL',dni:'',nie:'Y0544270N',obra:'',pin:'1034',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:44,nombre:'NNAMDI',apellidos:'PASCAL OUTADIMMA',dni:'',nie:'Y2672636G',obra:'',pin:'1035',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:45,nombre:'HUGES',apellidos:'FOBASSO DJOU',dni:'',nie:'Y1866061Q',obra:'',pin:'1036',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:46,nombre:'CARLOS',apellidos:'ENRIQUE OJEDA ZABALLOS',dni:'06641160W',nie:'',obra:'',pin:'1037',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:47,nombre:'OUSMANE',apellidos:'GUEYE',dni:'',nie:'Y3761748C',obra:'',pin:'1038',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:48,nombre:'JEAN',apellidos:'ANTHONY ALVEREZ GUTIERREZ',dni:'',nie:'Y7769211D',obra:'',pin:'1039',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:49,nombre:'ABOU',apellidos:'MBENGUE',dni:'',nie:'Y7601402P',obra:'',pin:'1040',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:50,nombre:'MAMADOU',apellidos:'SIDIBE',dni:'',nie:'Y6882587N',obra:'',pin:'1041',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:51,nombre:'MIRACLE',apellidos:'BENJAMIN',dni:'',nie:'Y8496596L',obra:'',pin:'1042',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:52,nombre:'MOHAMED',apellidos:'ISHMY BANGURA',dni:'',nie:'Z1700431T',obra:'',pin:'1043',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:53,nombre:'AROUNA',apellidos:'OUTTARA',dni:'',nie:'Y9310474L',obra:'',pin:'1044',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-  {id:54,nombre:'BABACAR',apellidos:'DIONE',dni:'',nie:'Z1193232C',obra:'',pin:'1045',status:'pending',arrival:null,dep:null,dist:null,h:0,extras:0},
-];
+// ── WORKERS DATA — Se cargan desde Firebase ──
+let WORKERS = [];
 // Reset solo si URL tiene ?reset=1 (uso manual)
 if(new URLSearchParams(window.location.search).get('reset')==='1'){
   localStorage.removeItem('lance_workers_v2');
   localStorage.removeItem('lance_deleted_keys');
   history.replaceState(null,'',window.location.pathname);
 }
-try{ const s=localStorage.getItem('lance_workers_v2'); if(s) WORKERS=JSON.parse(s); }catch(e){}
+try{ const s=localStorage.getItem('lance_workers_v2'); if(s){ WORKERS=JSON.parse(s); } }catch(e){}
 function saveW(){ try{ localStorage.setItem('lance_workers_v2',JSON.stringify(WORKERS)); }catch(e){} }
+
+// Cargar operarios desde Firebase al iniciar
+function loadWorkersFromFirebase(){
+  fetch(`${FB_URL}/operarios_registro.json`)
+    .then(r=>r.json())
+    .then(data=>{
+      if(!data) return;
+      const fbWorkers = [];
+      let id = 1;
+      Object.entries(data).forEach(([key, op])=>{
+        if(!op || !op.nombre) return;
+        // Comprobar si ya existe en WORKERS por DNI/NIE
+        const doc = op.dni || op.nie || key;
+        const exists = WORKERS.find(w=> 
+          (w.dni && w.dni.replace(/[^A-Z0-9]/gi,'').toUpperCase() === key.toUpperCase()) ||
+          (w.nie && w.nie.replace(/[^A-Z0-9]/gi,'').toUpperCase() === key.toUpperCase())
+        );
+        if(!exists){
+          fbWorkers.push({
+            id: 1000+id,
+            nombre: op.nombre||'',
+            apellidos: op.apellidos||'',
+            dni: op.dni||'',
+            nie: op.nie||'',
+            tel: op.tel||'',
+            obra: op.obra||'',
+            pin: op.pin||'----',
+            status: 'pending',
+            arrival: null, dep: null, dist: null, h: 0, extras: 0
+          });
+          id++;
+        }
+      });
+      if(fbWorkers.length){
+        WORKERS = [...WORKERS, ...fbWorkers];
+        // Deduplicar por DNI/NIE
+        const seen = new Set();
+        WORKERS = WORKERS.filter(w=>{
+          const doc = (w.dni||w.nie||'').toUpperCase();
+          if(!doc) return true;
+          if(seen.has(doc)) return false;
+          seen.add(doc);
+          return true;
+        });
+        // Reasignar IDs
+        WORKERS.forEach((w,i)=> w.id = i+1);
+        saveW();
+        animKPI('kv-total', WORKERS.length);
+        showToast(`✅ ${WORKERS.length} operarios cargados desde Firebase`,'ok');
+      }
+    })
+    .catch(e=>console.log('Error cargando operarios:',e));
+}
 
 let extras=[];
 const tasks=[];
@@ -843,7 +987,7 @@ function startFirebaseListener(){
   const today = new Date().toISOString().split('T')[0];
   // Poll cada 15 segundos
   loadFirebaseData();
-  setInterval(loadFirebaseData, 15000);
+  setInterval(loadFirebaseData, 5000);
 }
 
 function loadFirebaseData(){
@@ -851,25 +995,41 @@ function loadFirebaseData(){
     .then(r=>r.json())
     .then(data=>{
       if(!data) return;
-      Object.values(data).forEach(op=>{
+      Object.entries(data).forEach(([fbKey, op])=>{
         if(!op||!op.nombre) return;
         // Ignorar si fue eliminado
         if(isDeleted(op.nombre)) return;
-        // Buscar operario existente
-        let w = WORKERS.find(w=>
-          `${w.nombre} ${w.apellidos}`.toLowerCase().replace(/\s+/g,'_') ===
-          op.nombre.toLowerCase().replace(/\s+/g,'_') ||
-          `${w.nombre} ${w.apellidos}`.toLowerCase().includes(op.nombre.toLowerCase().split('_')[0])
-        );
+        
+        // Buscar operario existente — primero por DNI/NIE si disponible
+        let w = null;
+        if(op.doc){
+          const docClean = op.doc.replace(/[^A-Z0-9]/gi,'').toUpperCase();
+          w = WORKERS.find(x=> 
+            (x.dni && x.dni.replace(/[^A-Z0-9]/gi,'').toUpperCase() === docClean) ||
+            (x.nie && x.nie.replace(/[^A-Z0-9]/gi,'').toUpperCase() === docClean)
+          );
+        }
+        
+        // Si no encontró por DNI, buscar por nombre
+        if(!w){
+          const fbName = op.nombre.toLowerCase().replace(/[_\s]+/g,' ').trim();
+          w = WORKERS.find(x=>{
+            const wName = `${x.nombre} ${x.apellidos}`.toLowerCase().trim();
+            return wName === fbName || 
+                   wName.includes(fbName.split(' ')[0]) ||
+                   fbName.includes(wName.split(' ')[0]);
+          });
+        }
+
         // Si no existe, añadirlo dinámicamente
         if(!w){
-          const parts = op.nombre.replace(/_/g,' ').split(' ');
+          const nameParts = op.nombre.replace(/_/g,' ').split(' ');
           const newId = Math.max(0,...WORKERS.map(x=>x.id))+1;
           w = {
             id: newId,
-            nombre: parts[0]||op.nombre,
-            apellidos: parts.slice(1).join(' ')||'',
-            dni:'', nie:'',
+            nombre: nameParts[0]||op.nombre,
+            apellidos: nameParts.slice(1).join(' ')||'',
+            dni: op.doc||'', nie:'',
             obra: op.ciudad||'',
             pin:'----',
             status:'pending',
@@ -877,25 +1037,47 @@ function loadFirebaseData(){
           };
           WORKERS.push(w);
         }
+        
         // Actualizar estado
         w.status = op.activo ? 'in' : 'out';
         if(op.tipo==='entrada'){
           w.arrival = op.hora;
           w.dep = null;
+          // Calcular horas desde la entrada hasta ahora
+          if(op.hora){
+            const [eh,em] = op.hora.split(':').map(Number);
+            const now = new Date();
+            const mins = (now.getHours()*60+now.getMinutes()) - (eh*60+em);
+            w.h = mins>0 ? (mins/60).toFixed(1) : 0;
+          }
         } else if(op.tipo==='salida'){
           w.dep = op.hora;
+          // Calcular horas entre entrada y salida
+          if(w.arrival && op.hora){
+            const [eh,em] = w.arrival.split(':').map(Number);
+            const [sh,sm] = op.hora.split(':').map(Number);
+            const mins = (sh*60+sm) - (eh*60+em);
+            w.h = mins>0 ? (mins/60).toFixed(1) : 0;
+          }
         }
-        if(op.ciudad) w.obra = op.ciudad+', '+( op.provincia||'');
+        if(op.ciudad) w.obra = op.ciudad+', '+(op.provincia||'');
       });
-      // Actualizar KPIs y vistas
+      
+      // Actualizar KPIs
       const enObra = WORKERS.filter(w=>w.status==='in').length;
-      const kvIn = document.getElementById('kv-in');
-      if(kvIn) kvIn.textContent = enObra;
+      const sinFichar = WORKERS.filter(w=>w.status==='pending').length;
       animKPI('kv-total', WORKERS.length);
-      // Refrescar tabla si está visible
+      animKPI('kv-in', enObra);
+      
+      // Refrescar tablas si están visibles
       if(document.getElementById('page-jornada').classList.contains('active')) renderJornada();
       if(document.getElementById('page-operarios').classList.contains('active')) renderWorkers();
+      if(document.getElementById('page-dashboard').classList.contains('active')){
+        animKPI('kv-total', WORKERS.length);
+        animKPI('kv-in', enObra);
+      }
       showFirebaseBadge(Object.keys(data).length);
+      saveW();
     })
     .catch(e=>console.log('Firebase read error:',e));
 }
@@ -933,7 +1115,7 @@ function tick(){
 setInterval(tick,1000); tick();
 
 // ── PAGES ──
-const TITLES={dashboard:'Dashboard',jornada:'Resumen de jornada',operarios:'Operarios',alertas:'Alertas',extras:'Horas extras',horas:'Horas trabajadas',tareas:'Tareas',whatsapp:'WhatsApp',gestion:'Alta de operarios',asistente:'Asistente IA'};
+const TITLES={dashboard:'Tablero',jornada:'Resumen de jornada',operarios:'Operarios',alertas:'Alertas',extras:'Horas extras',horas:'Horas trabajadas',tareas:'Tareas',whatsapp:'WhatsApp',gestion:'Alta de operarios',asistente:'Asistente IA'};
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -951,19 +1133,22 @@ function showPage(name){
 
 // ── INIT ──
 function initApp(){
-  animKPI('kv-total',WORKERS.length);
-  animKPI('kv-in',WORKERS.filter(w=>w.status==='in').length);
-  animKPI('kv-alerts',0);
-  animKPI('kv-extras',0);
-  renderTaskLog(); renderWP(); updateExtraSelect();
-  const sel=document.getElementById('task-to');
-  sel.innerHTML='<option value="all">Todos los operarios</option>';
-  WORKERS.forEach(w=>{ sel.innerHTML+=`<option>${w.nombre} ${w.apellidos}</option>`; });
-  document.getElementById('jornada-date').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'2-digit',month:'long'});
-  // Iniciar conexión Firebase en tiempo real
-  startFirebaseListener();
-  // Sincronizar todos los operarios con Firebase
-  setTimeout(fbSyncAllWorkers, 2000);
+  // Cargar operarios desde Firebase
+  loadWorkersFromFirebase();
+  // Esperar un momento para que carguen y luego inicializar
+  setTimeout(()=>{
+    animKPI('kv-total',WORKERS.length);
+    animKPI('kv-in',WORKERS.filter(w=>w.status==='in').length);
+    animKPI('kv-alerts',0);
+    animKPI('kv-extras',0);
+    renderTaskLog(); renderWP(); updateExtraSelect();
+    const sel=document.getElementById('task-to');
+    sel.innerHTML='<option value="all">Todos los operarios</option>';
+    WORKERS.forEach(w=>{ sel.innerHTML+=`<option>${w.nombre} ${w.apellidos}</option>`; });
+    document.getElementById('jornada-date').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'2-digit',month:'long'});
+    // Iniciar conexión Firebase en tiempo real
+    startFirebaseListener();
+  }, 1500);
 }
 
 // ── KPI ANIM ──
@@ -1148,6 +1333,23 @@ function saveWorker(){
   if(!dni&&!nie){ showToast('Introduce DNI o NIE','err'); return; }
   if(pin.length!==4||isNaN(pin)){ showToast('El PIN debe tener exactamente 4 dígitos','err'); return; }
 
+  // Validar PIN duplicado
+  const pinDup = WORKERS.find(w=> w.pin===pin && w.id!=id);
+  if(pinDup){
+    showToast(`❌ PIN ${pin} ya asignado a ${pinDup.nombre} ${pinDup.apellidos}. Genera otro.`,'err');
+    return;
+  }
+
+  // Validar DNI/NIE duplicado
+  if(dni){
+    const dniDup = WORKERS.find(w=> w.dni && w.dni.toUpperCase()===dni && w.id!=id);
+    if(dniDup){ showToast(`❌ DNI ${dni} ya registrado para ${dniDup.nombre} ${dniDup.apellidos}`,'err'); return; }
+  }
+  if(nie){
+    const nieDup = WORKERS.find(w=> w.nie && w.nie.toUpperCase()===nie && w.id!=id);
+    if(nieDup){ showToast(`❌ NIE ${nie} ya registrado para ${nieDup.nombre} ${nieDup.apellidos}`,'err'); return; }
+  }
+
   if(id){
     const w=WORKERS.find(w=>w.id==id);
     if(w){ Object.assign(w,{nombre,apellidos,dni,nie,tel,obra,pin,status}); fbSyncWorker(w); }
@@ -1225,8 +1427,12 @@ function resetForm(){
   ['g-nombre','g-apellidos','g-dni','g-nie','g-tel','g-pin','g-obra'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
-  // Generar PIN automático de 4 dígitos
-  const autoPin = String(Math.floor(1000+Math.random()*9000));
+  // Generar PIN automático de 4 dígitos — sin duplicados
+  let autoPin;
+  const usedPins = WORKERS.map(w=>w.pin);
+  do {
+    autoPin = String(Math.floor(1000+Math.random()*9000));
+  } while(usedPins.includes(autoPin));
   document.getElementById('g-pin').value = autoPin;
   document.getElementById('g-status').value='pending';
   document.getElementById('g-btn').textContent='+ Dar de alta';
@@ -1237,43 +1443,169 @@ function resetForm(){
 }
 
 // ── WHATSAPP ALTA ──
-const APP_URL = 'https://pedrosaborrego-ai.github.io/lance2024/lance-operario-v3.html';
+function generarPinUnico(){
+  const usedPins = WORKERS.map(w=>w.pin);
+  let pin;
+  do {
+    pin = String(Math.floor(1000+Math.random()*9000));
+  } while(usedPins.includes(pin));
+  document.getElementById('g-pin').value = pin;
+  showToast(`🔐 PIN ${pin} generado (no duplicado)`,'ok');
+}
+
+const APP_URL = 'https://obracontrolgps.net/lance-operario-v3.html';
 let lastWorkerAdded = null;
 
+let selectedSO = 'android';
+
+function selectSO(so){
+  selectedSO = so;
+  const btnAndroid = document.getElementById('so-android');
+  const btnIphone = document.getElementById('so-iphone');
+  if(so==='android'){
+    btnAndroid.style.borderColor='var(--green)';
+    btnAndroid.style.background='rgba(56,224,123,.08)';
+    btnAndroid.style.color='var(--green)';
+    btnIphone.style.borderColor='var(--border)';
+    btnIphone.style.background='var(--card)';
+    btnIphone.style.color='var(--text3)';
+  } else {
+    btnIphone.style.borderColor='var(--text)';
+    btnIphone.style.background='rgba(0,0,0,.05)';
+    btnIphone.style.color='var(--text)';
+    btnAndroid.style.borderColor='var(--border)';
+    btnAndroid.style.background='var(--card)';
+    btnAndroid.style.color='var(--text3)';
+  }
+}
+
 function generarMsgWA(w){
-  return `🏗️ *CONSTRUCCIONES LANCE 2024 SL*\n\nHola ${w.nombre} ${w.apellidos} 👋\n\nTe enviamos tu acceso a *ObraControl GPS*:\n\n📱 Enlace de la app:\n👉 ${APP_URL}\n\n🔐 Tu PIN inicial: *${w.pin}*\n_(Podrás cambiarlo por uno personal al entrar)_\n\n📋 Pasos:\n1️⃣ Abre el enlace\n2️⃣ Elige tu idioma\n3️⃣ Escribe tu nombre\n4️⃣ Crea tu PIN personal\n5️⃣ ¡Ficha tu entrada!\n\n📍 Obra asignada:\n${w.obra||'Consulta con el encargado'}\n\n_ObraControl GPS · Construcciones Lance 2024 SL_`;
+  const doc = w.dni || w.nie || '';
+  const so = selectedSO || 'android';
+  
+  let instrucciones = '';
+  if(so === 'iphone'){
+    instrucciones = `📲 *INSTALAR EN IPHONE:*\n` +
+      `1️⃣ Abre el enlace en *Safari* (importante: NO usar Chrome)\n` +
+      `2️⃣ Pulsa el botón *Compartir* ⬆️ (cuadrado con flecha)\n` +
+      `3️⃣ Baja y pulsa *"Añadir a pantalla de inicio"*\n` +
+      `4️⃣ Pulsa *"Añadir"*\n` +
+      `5️⃣ Ya tienes el icono de Lance en tu pantalla`;
+  } else {
+    instrucciones = `📲 *INSTALAR EN ANDROID:*\n` +
+      `1️⃣ Abre el enlace en Chrome\n` +
+      `2️⃣ Pulsa los *3 puntos* ⋮ (arriba a la derecha)\n` +
+      `3️⃣ Pulsa *"Añadir a pantalla de inicio"*\n` +
+      `4️⃣ Pulsa *"Añadir"*\n` +
+      `5️⃣ Ya tienes el icono de Lance en tu pantalla`;
+  }
+
+  return `🏗️ *CONSTRUCCIONES LANCE 2024 SL*\n\n` +
+    `Hola ${w.nombre} ${w.apellidos} 👋\n\n` +
+    `Te enviamos tu acceso a *ObraControl GPS*:\n\n` +
+    `📱 Enlace de la app:\n👉 ${APP_URL}\n\n` +
+    `📄 Tu DNI/NIE: *${doc}*\n` +
+    `🔐 Tu PIN inicial: *${w.pin}*\n` +
+    `_(Podrás cambiarlo por uno personal al entrar)_\n\n` +
+    `📋 *PASOS PARA FICHAR:*\n` +
+    `1️⃣ Abre el enlace\n` +
+    `2️⃣ Elige tu idioma\n` +
+    `3️⃣ Acepta el consentimiento\n` +
+    `4️⃣ Introduce tu DNI o NIE\n` +
+    `5️⃣ Introduce el PIN que te hemos dado\n` +
+    `6️⃣ Crea tu PIN personal\n` +
+    `7️⃣ ¡Ficha tu entrada!\n\n` +
+    `${instrucciones}\n\n` +
+    `📍 Obra asignada:\n${w.obra||'Consulta con el encargado'}\n\n` +
+    `_ObraControl GPS · Construcciones Lance 2024 SL_`;
 }
 
 function sendWaAlta(){
   if(!lastWorkerAdded) return;
   const msg = encodeURIComponent(generarMsgWA(lastWorkerAdded));
-  window.open(`https://wa.me/?text=${msg}`,'_blank');
+  const phone = (lastWorkerAdded.tel||'').replace(/[\s\-\(\)]/g,'');
+  let cleanPhone = phone.replace(/^\+/,'');
+  if(cleanPhone && !cleanPhone.startsWith('34')) cleanPhone = '34'+cleanPhone;
+  const url = cleanPhone ? `https://wa.me/${cleanPhone}?text=${msg}` : `https://wa.me/?text=${msg}`;
+  showToast(`📱 Abriendo WhatsApp...`,'ok');
+  setTimeout(()=>{ window.open(url, '_blank'); }, 500);
 }
 
 function sendWaOperario(id){
   const w = WORKERS.find(w=>w.id===id); if(!w) return;
   const msg = encodeURIComponent(generarMsgWA(w));
-  const phone = (w.tel||'').replace(/[\s\-\+]/g,'');
-  const url = phone ? `https://wa.me/34${phone}?text=${msg}` : `https://wa.me/?text=${msg}`;
+  const phone = (w.tel||'').replace(/[\s\-\(\)]/g,'');
+  let cleanPhone = phone.replace(/^\+/,'');
+  if(cleanPhone && !cleanPhone.startsWith('34')) cleanPhone = '34'+cleanPhone;
+  const url = cleanPhone ? `https://wa.me/${cleanPhone}?text=${msg}` : `https://wa.me/?text=${msg}`;
   showToast(`📱 Abriendo WhatsApp para ${w.nombre}`,'ok');
-  setTimeout(()=>{ window.location.href = url; }, 500);
+  setTimeout(()=>{ window.open(url, '_blank'); }, 500);
 }
 
 // ── TASKS ──
 function renderTaskLog(){
   const log=document.getElementById('task-log'); if(!log)return;
-  if(!tasks.length){ log.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3);font-size:12px">Sin tareas enviadas aún.</div>'; return; }
-  log.innerHTML=[...tasks].reverse().map(t=>`<div class="wp-item"><div class="wp-av" style="background:linear-gradient(135deg,var(--blue),var(--blue3))">📋</div><div><div class="wp-n">${t.to}</div><div class="wp-m">${t.msg.slice(0,55)}${t.msg.length>55?'...':''}</div></div><div class="wp-t">${t.time}</div></div>`).join('');
+  // Leer tareas de Firebase
+  fetch(`${FB_URL}/tareas.json`)
+    .then(r=>r.json())
+    .then(data=>{
+      if(!data){
+        if(!tasks.length) log.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3);font-size:12px">Sin tareas enviadas aún.</div>';
+        return;
+      }
+      const fbTasks = Object.values(data).sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
+      log.innerHTML=fbTasks.map(t=>`<div class="wp-item">
+        <div class="wp-av" style="background:linear-gradient(135deg,var(--blue),var(--blue3))">📋</div>
+        <div style="flex:1">
+          <div class="wp-n">${t.to||'Todos'}</div>
+          <div class="wp-m">${(t.msg||'').slice(0,55)}${(t.msg||'').length>55?'...':''}</div>
+          <div style="font-size:9px;color:${t.completada?'var(--green)':'var(--amber)'};margin-top:2px;">${t.completada?'✅ Completada':'⏳ Pendiente'}</div>
+        </div>
+        <div class="wp-t">${t.time||''}<br><span style="font-size:9px">${t.fecha||''}</span></div>
+      </div>`).join('');
+    })
+    .catch(()=>{
+      if(!tasks.length) log.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3);font-size:12px">Sin tareas enviadas aún.</div>';
+    });
 }
 function sendTask(){
   const to=document.getElementById('task-to');
+  const prio=document.getElementById('task-prio');
   const msg=document.getElementById('task-msg').value.trim();
-  if(!msg)return;
-  const now=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-  tasks.push({to:to.options[to.selectedIndex].text,msg,time:now});
+  if(!msg){ showToast('Escribe la descripción de la tarea','err'); return; }
+  const now=new Date();
+  const timeStr=now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  const dateStr=now.toISOString().split('T')[0];
+  const toName=to.options[to.selectedIndex].text;
+  const prioText=prio.options[prio.selectedIndex].text;
+  
+  const tareaData = {
+    to: toName,
+    msg: msg,
+    prioridad: prioText,
+    time: timeStr,
+    fecha: dateStr,
+    timestamp: now.getTime(),
+    enviadaPor: 'Oficina',
+    completada: false
+  };
+
+  // Guardar en Firebase
+  const tareaId = 'tarea_'+now.getTime();
+  fetch(`${FB_URL}/tareas/${tareaId}.json`, {
+    method: 'PUT',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(tareaData)
+  }).then(()=>{
+    showToast(`✅ Tarea enviada a ${toName}`,'ok');
+    renderTaskLog();
+  }).catch(()=>{
+    showToast('⚠️ Error al enviar tarea','err');
+  });
+
+  // También guardar localmente
+  tasks.push({to:toName,msg,time:timeStr});
   document.getElementById('task-msg').value='';
-  renderTaskLog();
-  showToast('✅ Tarea enviada','ok');
 }
 
 // ── WP ──
