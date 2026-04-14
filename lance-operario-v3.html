@@ -338,18 +338,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
 .toast.inf{background:rgba(37,99,174,.12);border-color:var(--blue2);color:var(--blue3);}
 @keyframes tup{from{transform:translateX(-50%) translateY(14px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
 
-/* CONSENT SCREENS */
-.consent-screen { padding: 28px 20px; max-width: 420px; margin: 0 auto; }
-.consent-logo { text-align: center; margin-bottom: 18px; }
-.consent-title { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 800; color: #1A2840; margin-bottom: 8px; text-align: center; }
-.consent-sub { font-size: 12px; color: #64748B; text-align: center; margin-bottom: 20px; }
-.consent-box { background: #F8FAFC; border: 1px solid #E2EAF4; border-radius: 12px; padding: 16px; margin-bottom: 14px; font-size: 12px; color: #334155; line-height: 1.6; }
-.consent-box strong { color: #1A2840; display: block; margin-bottom: 6px; font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: 0.5px; }
-.consent-check { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 12px; color: #334155; cursor: pointer; }
-.consent-check input { margin-top: 2px; width: 16px; height: 16px; cursor: pointer; accent-color: #1B4F8C; flex-shrink: 0; }
-.consent-btn { width: 100%; padding: 14px; background: #1B4F8C; color: #fff; border: none; border-radius: 12px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; opacity: 0.4; transition: opacity .2s; }
-.consent-btn.active { opacity: 1; }
-.consent-legal { font-size: 10px; color: #94A3B8; text-align: center; margin-top: 12px; line-height: 1.5; }
+/* RGPD CONSENT */
+.consent-wrap{padding:28px 20px;max-width:420px;margin:0 auto;}
+.consent-title{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:800;color:#1A2840;margin-bottom:6px;text-align:center;}
+.consent-sub{font-size:12px;color:#64748B;text-align:center;margin-bottom:18px;}
+.consent-box{background:#F8FAFC;border:1px solid #E2EAF4;border-radius:12px;padding:14px;margin-bottom:12px;font-size:11.5px;color:#334155;line-height:1.6;}
+.consent-box b{color:#1A2840;display:block;margin-bottom:4px;font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;}
+.consent-chk{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:12px;color:#334155;cursor:pointer;line-height:1.5;}
+.consent-chk input{margin-top:2px;width:16px;height:16px;cursor:pointer;accent-color:#1B4F8C;flex-shrink:0;}
+.consent-ok{width:100%;padding:14px;background:#1B4F8C;color:#fff;border:none;border-radius:12px;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;opacity:0.4;pointer-events:none;transition:opacity .2s;}
+.consent-ok.on{opacity:1;pointer-events:auto;}
+.consent-legal{font-size:10px;color:#94A3B8;text-align:center;margin-top:10px;line-height:1.5;}
 
 </style>
 <style>
@@ -415,49 +414,29 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
 <!-- ══════════════════════════════
      SCREEN 1: IDIOMA
 ══════════════════════════════ -->
-<!-- PANTALLA BLOQUEADA RGPD -->
-<div id="blocked-screen" style="display:none;position:fixed;inset:0;z-index:200;background:linear-gradient(135deg,#0A1628 0%,#1B3A6B 50%,#0A1628 100%);display:flex;align-items:center;justify-content:center;padding:24px;">
-  <div style="background:#fff;border-radius:20px;width:100%;max-width:420px;overflow-y:auto;max-height:90vh;">
-    <div class="consent-screen">
-      <div class="consent-logo">
-        <div style="font-size:32px;margin-bottom:4px;">🔒</div>
-        <div class="consent-title">Protección de Datos</div>
-        <div class="consent-sub">Construcciones Lance 2024 SL — ObraControl GPS</div>
-      </div>
-      
-      <div class="consent-box">
-        <strong>📋 INFORMACIÓN BÁSICA — RGPD</strong>
-        <b>Responsable:</b> Construcciones Lance 2024 SL<br>
-        <b>Finalidad:</b> Control de presencia y gestión de jornada laboral mediante geolocalización.<br>
-        <b>Legitimación:</b> Relación contractual laboral (Art. 6.1.b RGPD) y obligación legal (Art. 6.1.c RGPD).<br>
-        <b>Destinatarios:</b> No se ceden datos a terceros salvo obligación legal.<br>
-        <b>Derechos:</b> Acceso, rectificación, supresión, oposición y portabilidad dirigiéndose al responsable.
-      </div>
-
-      <div class="consent-box">
-        <strong>📍 USO DE GEOLOCALIZACIÓN</strong>
-        Esta aplicación utiliza el GPS de tu dispositivo <b>únicamente durante el fichaje</b> para verificar que te encuentras en zona de obra. 
-        Los datos de ubicación se almacenan junto al registro de entrada/salida y son accesibles solo por el encargado.
-        No se realiza seguimiento continuo de tu posición.
-      </div>
-
-      <label class="consent-check" onclick="checkConsent()">
-        <input type="checkbox" id="chk1"> 
-        <span>He leído y acepto el tratamiento de mis datos personales conforme al RGPD para el control de presencia laboral.</span>
-      </label>
-      <label class="consent-check" onclick="checkConsent()">
-        <input type="checkbox" id="chk2">
-        <span>Consiento el uso de mi geolocalización en el momento del fichaje para verificar mi presencia en zona de obra.</span>
-      </label>
-
-      <button class="consent-btn" id="consent-btn" onclick="acceptConsent()" disabled>
-        ✅ Acepto y continuar
-      </button>
-      <div class="consent-legal">
-        Puedes revocar tu consentimiento en cualquier momento contactando con tu encargado.<br>
-        Construcciones Lance 2024 SL · CIF: en poder del responsable
-      </div>
+<div id="s-consent" class="screen hidden" style="overflow-y:auto;">
+  <div class="consent-wrap">
+    <div style="text-align:center;margin-bottom:14px;">
+      <div style="font-size:36px;">🔒</div>
+      <div class="consent-title">Protección de Datos</div>
+      <div class="consent-sub">Construcciones Lance 2024 SL — ObraControl GPS</div>
     </div>
+    <div class="consent-box">
+      <b>📋 Información básica RGPD</b>
+      <strong>Responsable:</strong> Construcciones Lance 2024 SL<br>
+      <strong>Finalidad:</strong> Control de presencia y jornada laboral mediante geolocalización.<br>
+      <strong>Legitimación:</strong> Relación contractual (Art. 6.1.b RGPD) y obligación legal (Art. 6.1.c RGPD).<br>
+      <strong>Destinatarios:</strong> No se ceden datos a terceros salvo obligación legal.<br>
+      <strong>Derechos:</strong> Acceso, rectificación, supresión y portabilidad contactando con el encargado.
+    </div>
+    <div class="consent-box">
+      <b>📍 Uso de geolocalización</b>
+      La app usa el GPS de tu dispositivo <strong>únicamente en el momento del fichaje</strong> para verificar tu presencia en zona de obra. No se realiza seguimiento continuo. Los datos se almacenan junto al registro de entrada/salida.
+    </div>
+    <label class="consent-chk"><input type="checkbox" id="chk-datos" onchange="chkConsent()"> Acepto el tratamiento de mis datos personales conforme al RGPD para el control de presencia laboral.</label>
+    <label class="consent-chk"><input type="checkbox" id="chk-gps" onchange="chkConsent()"> Consiento el uso de mi geolocalización en el momento del fichaje para verificar mi presencia en zona de obra.</label>
+    <button class="consent-ok" id="btn-consent" onclick="doConsent()">✅ Acepto y continuar</button>
+    <div class="consent-legal">Este consentimiento queda registrado con fecha y hora.<br>Puedes revocarlo contactando con tu encargado.<br>Construcciones Lance 2024 SL</div>
   </div>
 </div>
 
@@ -846,6 +825,7 @@ let myPin = '';
 let setPinVal = '';
 let pinVal = '';
 let isIn = false;
+let entryTime = localStorage.getItem('lance_entry_time') || null;
 let gpsWatch = null;
 let myLat = null, myLng = null;
 let changingPin = false;
@@ -916,6 +896,12 @@ function verifyDoc(){
       // Guardar datos del operario
       workerName = `${data.nombre} ${data.apellidos}`;
       workerDoc  = doc;
+      // Guardar consentimiento en Firebase si aún no se guardó
+      const consentDate = localStorage.getItem('lance_consent_v1');
+      if(consentDate){
+        const key = doc.replace(/[^A-Z0-9]/g,'');
+        fetch(`${FB_URL}/consentimientos/${key}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({fecha:consentDate,nombre:'',doc:doc,acepto_datos:true,acepto_gps:true})}).catch(()=>{});
+      }
       workerPin  = data.pin; // PIN de empresa — obligatorio verificar
       workerObra = data.obra||'';
       if(msg) msg.textContent='';
@@ -1200,8 +1186,10 @@ function fbSaveCheckin(type){
   const timeStr = now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
   const data = {
     nombre: workerName,
+    doc: workerDoc||'',
     tipo: type, // 'entrada' o 'salida'
     hora: timeStr,
+    hora_entrada: type==='entrada' ? timeStr : (entryTime||null),
     fecha: dateStr,
     ciudad: myCity||'',
     provincia: myProvince||'',
@@ -1210,6 +1198,8 @@ function fbSaveCheckin(type){
     lng: myLng||0,
     timestamp: now.getTime()
   };
+  if(type==='entrada'){ entryTime=timeStr; localStorage.setItem('lance_entry_time',timeStr); }
+  if(type==='salida'){ entryTime=null; localStorage.removeItem('lance_entry_time'); }
   const key = workerName.replace(/\s+/g,'_').toLowerCase();
   // Guardar fichaje
   fetch(`${FB_URL}/fichajes/${dateStr}/${key}.json`, {
@@ -1330,12 +1320,11 @@ function logout(){
   document.getElementById('checkin-btn').classList.remove('in');
   document.getElementById('checkin-status').textContent='';
   document.getElementById('worker-name-input').value='';
-  goTo('s-lang');
+  initConsent();
 }
 
 
 // ── SPLASH SCREEN ──
-initConsent();
 window.addEventListener('load',()=>{
   setTimeout(()=>{
     const splash=document.getElementById('s-splash');
@@ -1388,19 +1377,23 @@ function showToast(msg,type='ok'){
 setTimeout(checkIOSInstall,2000);
 
 // ── RGPD CONSENT ──
-function checkConsent(){
-  const ok = document.getElementById('chk1').checked && document.getElementById('chk2').checked;
-  const btn = document.getElementById('consent-btn');
-  btn.disabled = !ok;
-  btn.classList.toggle('active', ok);
+function chkConsent(){
+  const ok = document.getElementById('chk-datos').checked && document.getElementById('chk-gps').checked;
+  document.getElementById('btn-consent').classList.toggle('on', ok);
 }
-function acceptConsent(){
-  localStorage.setItem('lance_consent_v1', '1');
-  document.getElementById('blocked-screen').style.display = 'none';
+function doConsent(){
+  const ts = new Date().toISOString();
+  localStorage.setItem('lance_consent_v1', ts);
+  // Guardar en Firebase (se actualizará con DNI cuando el operario se identifique)
+  fetch(`${FB_URL}/consentimientos/pendiente_${Date.now()}.json`,{
+    method:'PUT', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({fecha:ts, acepto_datos:true, acepto_gps:true, dispositivo: navigator.userAgent.substring(0,50)})
+  }).catch(()=>{});
+  goTo('s-lang');
 }
 function initConsent(){
   if(!localStorage.getItem('lance_consent_v1')){
-    document.getElementById('blocked-screen').style.display = 'flex';
+    goTo('s-consent');
   }
 }
 
