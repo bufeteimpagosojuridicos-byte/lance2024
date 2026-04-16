@@ -415,6 +415,21 @@ textarea.form-ctrl{resize:vertical;min-height:80px;}
               <div class="form-g"><label class="form-lbl">Obra asignada</label><input class="form-ctrl" id="g-obra" placeholder="Dirección y CP"></div>
             </div>
             <div class="form-g">
+              <label class="form-lbl">👷 Categoría profesional</label>
+              <div style="display:flex;gap:8px;">
+                <button type="button" id="cat-peon" onclick="selectCategoria('peon')" style="flex:1;padding:10px 6px;background:var(--verde-light);border:2px solid var(--verde3);border-radius:9px;cursor:pointer;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--verde2);">
+                  🧱<br>PEÓN
+                </button>
+                <button type="button" id="cat-oficial" onclick="selectCategoria('oficial')" style="flex:1;padding:10px 6px;background:var(--white);border:2px solid var(--border);border-radius:9px;cursor:pointer;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text3);">
+                  🔧<br>OFICIAL
+                </button>
+                <button type="button" id="cat-encargado" onclick="selectCategoria('encargado')" style="flex:1;padding:10px 6px;background:var(--white);border:2px solid var(--border);border-radius:9px;cursor:pointer;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--text3);">
+                  👔<br>ENCARGADO
+                </button>
+              </div>
+              <input type="hidden" id="g-categoria" value="peon">
+            </div>
+            <div class="form-g">
               <label class="form-lbl">PIN (4 dígitos)</label>
               <div style="display:flex;gap:6px;">
                 <input class="form-ctrl" id="g-pin" maxlength="4" placeholder="••••" style="letter-spacing:4px;font-family:'DM Mono';font-size:16px;font-weight:700;flex:1;">
@@ -604,7 +619,7 @@ function renderWorkers(){
   const sb={in:'<span class="pill p-in">✅ En obra</span>',out:'<span class="pill p-out">🔴 Fuera</span>',pending:'<span class="pill p-pend">⏳ Sin fichar</span>'};
   tb.innerHTML=filtered.map((w,i)=>`<tr>
     <td style="font-weight:700;color:var(--text3)">${i+1}</td>
-    <td><div style="font-weight:600">${w.nombre} ${w.apellidos}</div></td>
+    <td><div style="font-weight:600">${w.nombre} ${w.apellidos}</div><div style="font-size:10px;color:var(--text3)">${w.categoria==='encargado'?'👔 Encargado':w.categoria==='oficial'?'🔧 Oficial':'🧱 Peón'}</div></td>
     <td style="font-size:11px">${w.dni||w.nie||'—'}</td>
     <td style="font-size:11px;color:var(--text3)">${(w.obra||'').split(',')[0]||'—'}</td>
     <td><span style="font-family:'DM Mono';font-weight:800;font-size:15px;color:var(--verde3);letter-spacing:3px">${w.pin}</span></td>
@@ -638,6 +653,7 @@ function saveWorker(){
   const tel=document.getElementById('g-tel').value.trim();
   const obra=document.getElementById('g-obra').value;
   const pin=document.getElementById('g-pin').value.trim();
+  const categoria=document.getElementById('g-categoria').value||'peon';
   if(!nombre||!apellidos){ showToast('Introduce nombre y apellidos','err'); return; }
   if(!dni&&!nie){ showToast('DNI o NIE obligatorio','err'); return; }
   if(pin.length!==4||isNaN(pin)){ showToast('PIN de 4 dígitos','err'); return; }
@@ -648,10 +664,10 @@ function saveWorker(){
     document.getElementById('wa-box').style.display='none';
   } else {
     const newId=Math.max(0,...WORKERS.map(w=>w.id))+1;
-    const nw={id:newId,nombre,apellidos,dni,nie,tel,obra,pin,status:'pending',arrival:null,dep:null,h:0};
+    const nw={id:newId,nombre,apellidos,dni,nie,tel,obra,pin,categoria,status:'pending',arrival:null,dep:null,h:0};
     WORKERS.push(nw); lastAdded=nw;
     const doc=(dni||nie).replace(/[^A-Z0-9]/g,'');
-    fetch(`${FB_URL}/operarios_registro/${doc}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,apellidos,dni,nie,pin,obra,activo:true})}).catch(()=>{});
+    fetch(`${FB_URL}/operarios_registro/${doc}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,apellidos,dni,nie,pin,obra,categoria,activo:true})}).catch(()=>{});
     document.getElementById('wa-preview').textContent=genMsgWA(nw);
     document.getElementById('wa-box').style.display='block';
     showToast(`✅ ${nombre} ${apellidos} dado de alta`,'ok');
@@ -660,7 +676,27 @@ function saveWorker(){
   saveW(); resetForm(); renderGestion(); renderWorkers();
 }
 
-function genPin(){
+function selectCategoria(cat){
+  const cats = {
+    peon:     {emoji:'🧱', label:'PEÓN',      color:'var(--verde2)', bg:'var(--verde-light)', border:'var(--verde3)'},
+    oficial:  {emoji:'🔧', label:'OFICIAL',   color:'var(--amber)',  bg:'var(--amber-l)',     border:'var(--amber)'},
+    encargado:{emoji:'👔', label:'ENCARGADO', color:'var(--blue2)',  bg:'var(--blue-light)',  border:'var(--blue2)'},
+  };
+  document.getElementById('g-categoria').value = cat;
+  ['peon','oficial','encargado'].forEach(c=>{
+    const btn = document.getElementById('cat-'+c);
+    if(!btn) return;
+    if(c===cat){
+      btn.style.background = cats[c].bg;
+      btn.style.borderColor = cats[c].border;
+      btn.style.color = cats[c].color;
+    } else {
+      btn.style.background = 'var(--white)';
+      btn.style.borderColor = 'var(--border)';
+      btn.style.color = 'var(--text3)';
+    }
+  });
+}
   const used=WORKERS.map(w=>w.pin);
   let p; do{ p=String(Math.floor(1000+Math.random()*9000)); }while(used.includes(p));
   document.getElementById('g-pin').value=p;
@@ -707,6 +743,7 @@ function resetForm(){
   document.getElementById('edit-id').value='';
   ['g-nombre','g-apellidos','g-dni','g-nie','g-tel','g-obra'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   genPin();
+  selectCategoria('peon');
   document.getElementById('g-btn').textContent='+ DAR DE ALTA';
   document.getElementById('alta-title').textContent='➕ Alta de operario';
   document.getElementById('wa-box').style.display='none';
@@ -723,7 +760,7 @@ function renderGestion(){
       <div style="width:34px;height:34px;border-radius:50%;background:var(--verde-light);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-weight:800;font-size:12px;color:var(--verde3);flex-shrink:0;">${(w.nombre[0]||'')+(w.apellidos[0]||'')}</div>
       <div style="flex:1;min-width:0">
         <div style="font-weight:600;font-size:13px">${w.nombre} ${w.apellidos}</div>
-        <div style="font-size:10px;color:var(--text3)">${w.dni||w.nie||'—'} · PIN: <strong style="color:var(--verde3)">${w.pin}</strong></div>
+        <div style="font-size:10px;color:var(--text3)">${w.dni||w.nie||'—'} · PIN: <strong style="color:var(--verde3)">${w.pin}</strong> · ${w.categoria==='encargado'?'👔 Encargado':w.categoria==='oficial'?'🔧 Oficial':'🧱 Peón'}</div>
       </div>
       <div style="display:flex;gap:4px;">
         <button class="btn-edit" onclick="editWorker(${w.id})">✏️</button>
