@@ -383,12 +383,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
                 <button onclick="genPin()" type="button" style="padding:9px 12px;background:var(--verde-light);border:1px solid var(--border2);border-radius:8px;cursor:pointer;">&#128260;</button>
               </div>
             </div>
-            <button class="btn-p" onclick="saveWorker()" id="g-btn">+ DAR DE ALTA</button>
+            <div class="fg">
+              <label class="flbl">Sistema operativo del movil</label>
+              <div style="display:flex;gap:8px;">
+                <button type="button" class="catbtn" id="so-android" onclick="selSO('android')" style="background:var(--verde-light);border-color:var(--verde3);color:var(--verde2);">&#129503; Android</button>
+                <button type="button" class="catbtn" id="so-iphone" onclick="selSO('iphone')">&#63743; iPhone</button>
+              </div>
+              <input type="hidden" id="g-so" value="android">
+            </div>
+            <div style="background:var(--amber-l);border:1px solid rgba(183,119,13,.2);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:9px;color:var(--amber);">
+              &#9888; El operario puede cambiar su PIN por uno personal en la app cuando inicie sesion por primera vez.
+            </div>
             <button class="btn-s" onclick="resetForm()">Limpiar</button>
             <div class="wabox" id="wabox">
-              <div style="font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;color:var(--verde3);margin-bottom:8px;">OPERARIO DADO DE ALTA</div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--verde3);margin-bottom:8px;">&#10003; OPERARIO DADO DE ALTA — ENVIA LAS INSTRUCCIONES</div>
+              <div style="font-size:9px;color:var(--text3);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Vista previa del mensaje WhatsApp:</div>
               <div class="waprev" id="waprev"></div>
-              <button class="btn-wa" onclick="sendWaAlta()">ENVIAR POR WHATSAPP</button>
+              <button class="btn-wa" onclick="sendWaAlta()">&#128172; ENVIAR INSTRUCCIONES POR WHATSAPP</button>
+              <div style="font-size:9px;color:var(--text3);margin-top:6px;text-align:center;">Se enviara al telefono registrado en el alta</div>
             </div>
           </div>
         </div>
@@ -742,20 +754,59 @@ function saveWorker() {
   updateTaskSel();
 }
 
+function selSO(so) {
+  document.getElementById('g-so').value = so;
+  var btnA = document.getElementById('so-android');
+  var btnI = document.getElementById('so-iphone');
+  if (so === 'android') {
+    btnA.style.background = 'var(--verde-light)'; btnA.style.borderColor = 'var(--verde3)'; btnA.style.color = 'var(--verde2)';
+    btnI.style.background = 'var(--white)'; btnI.style.borderColor = 'var(--border)'; btnI.style.color = 'var(--text3)';
+  } else {
+    btnI.style.background = 'var(--verde-light)'; btnI.style.borderColor = 'var(--verde3)'; btnI.style.color = 'var(--verde2)';
+    btnA.style.background = 'var(--white)'; btnA.style.borderColor = 'var(--border)'; btnA.style.color = 'var(--text3)';
+  }
+}
+
 function buildWAMsg(w) {
   var n = w.nombre + ' ' + w.apellidos;
   var doc = w.dni || w.nie || '';
   var obra = w.obra || 'Consulta con el encargado';
-  return 'OBRACONTROL PRO\n\nHola ' + n + '\n\nTu acceso:\n' + APP_URL + '\n\nDNI/NIE: ' + doc + '\nPIN: ' + w.pin + '\n\nObra: ' + obra;
+  var cat = w.cat === 'encargado' ? 'Encargado' : w.cat === 'oficial' ? 'Oficial' : 'Peon';
+  var so = document.getElementById('g-so') ? document.getElementById('g-so').value : 'android';
+  var instalar = so === 'iphone'
+    ? 'INSTALAR EN IPHONE:\nSafari > boton Compartir > Anadir a pantalla inicio'
+    : 'INSTALAR EN ANDROID:\nChrome > 3 puntos > Anadir a pantalla inicio';
+
+  var msg = 'OBRACONTROL PRO - Construcciones Lance 2024 SL\n\n';
+  msg += 'Hola ' + n + '!\n\n';
+  msg += 'Bienvenido al equipo. Aqui tienes tu acceso:\n\n';
+  msg += 'APP: ' + APP_URL + '\n\n';
+  msg += 'TUS DATOS:\n';
+  msg += 'DNI/NIE: ' + doc + '\n';
+  msg += 'PIN: ' + w.pin + '\n';
+  msg += 'Categoria: ' + cat + '\n';
+  msg += 'Obra: ' + obra + '\n\n';
+  msg += 'COMO ENTRAR:\n';
+  msg += '1. Abre el enlace de arriba\n';
+  msg += '2. Elige tu idioma\n';
+  msg += '3. Acepta los permisos\n';
+  msg += '4. Introduce tu DNI/NIE\n';
+  msg += '5. Introduce tu PIN: ' + w.pin + '\n';
+  msg += '6. Pulsa ENTRADA para fichar\n\n';
+  msg += instalar + '\n\n';
+  msg += 'Dudas: +34 ' + getTel() + '\n';
+  msg += 'ObraControl Pro';
+  return msg;
 }
 
 function sendWaAlta() {
   if (!lastAdded) return;
   var phone = (lastAdded.tel||'').replace(/[\s\-\(\)]/g,'').replace(/^\+/,'');
-  if (phone && phone.indexOf('34') !== 0) phone = '34' + phone;
+  if (phone && phone.length === 9 && /^[6789]/.test(phone)) phone = '34' + phone;
   var msg = encodeURIComponent(buildWAMsg(lastAdded));
   var url = phone ? 'https://wa.me/' + phone + '?text=' + msg : 'https://wa.me/?text=' + msg;
-  window.open(url, '_blank');
+  showToast('Abriendo WhatsApp...', 'ok');
+  setTimeout(function() { window.open(url, '_blank'); }, 300);
 }
 
 function editW(id) {
@@ -797,6 +848,7 @@ function resetForm() {
   });
   genPin();
   selCat('peon');
+  selSO('android');
   document.getElementById('g-btn').textContent = '+ DAR DE ALTA';
   document.getElementById('alta-title').textContent = 'Alta de operario';
   document.getElementById('wabox').style.display = 'none';
