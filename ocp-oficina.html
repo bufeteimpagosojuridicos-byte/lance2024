@@ -223,9 +223,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="sb-foot">
       <div class="sb-user">
         <div class="sb-av">OP</div>
-        <div>
+        <div style="flex:1;min-width:0;">
           <div class="sb-name">ObraControl Pro</div>
-          <div class="sb-role">Encargado</div>
+          <div style="margin-top:4px;">
+            <input id="tel-responsable"
+              type="tel"
+              placeholder="+34 600 000 000"
+              oninput="saveTel()"
+              style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(200,168,75,.25);border-radius:6px;padding:4px 8px;font-size:10px;color:var(--oro2);outline:none;font-family:'DM Sans',sans-serif;">
+          </div>
+          <div style="font-size:8px;color:rgba(255,255,255,.25);margin-top:2px;letter-spacing:.5px;">Tel. que recibe alertas</div>
         </div>
       </div>
       <button class="sb-out" onclick="logout()">Cerrar sesion</button>
@@ -538,6 +545,7 @@ tick();
 
 // INIT
 function initApp() {
+  loadTel();
   animKPI('kv-total', WORKERS.length);
   animKPI('kv-in', WORKERS.filter(function(w) { return w.status === 'in'; }).length);
   animKPI('kv-alerts', 0);
@@ -1059,8 +1067,9 @@ function cargarIncidencias() {
 }
 
 function responderOperario(nombre) {
+  var tel = getTel();
   var msg = encodeURIComponent('Hola ' + nombre + ', hemos recibido tu reporte. ');
-  window.open('https://wa.me/34609321585?text=' + msg, '_blank');
+  window.open('https://wa.me/' + tel + '?text=' + msg, '_blank');
 }
 
 function resolverInc(btn) {
@@ -1123,7 +1132,24 @@ function mostrarPorObra() {
   }).join('');
 }
 
-// TOAST
+// TELEFONO RESPONSABLE
+function saveTel() {
+  var tel = document.getElementById('tel-responsable').value.trim();
+  localStorage.setItem('ocp_tel_responsable', tel);
+}
+
+function getTel() {
+  var tel = localStorage.getItem('ocp_tel_responsable') || '34609321585';
+  return tel.replace(/[\s\-\(\)\+]/g,'').replace(/^34/,'34');
+}
+
+function loadTel() {
+  var saved = localStorage.getItem('ocp_tel_responsable');
+  if (saved) {
+    var el = document.getElementById('tel-responsable');
+    if (el) el.value = saved;
+  }
+}
 var toastTimer;
 function showToast(msg, tipo) {
   var t = document.getElementById('toast');
