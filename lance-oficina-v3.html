@@ -1742,3 +1742,19 @@ function sendResumenWA(){
   );
   window.open(`https://wa.me/${ENCARGADO_WA}?text=${msg}`,'_blank');
   showToast('📱 Abriendo WhatsApp...','ok'
+);
+  window.open(`https://wa.me/${ENCARGADO_WA}?text=${msg}`,'_blank');
+  showToast('📱 Abriendo WhatsApp...','ok');
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg,tipo){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast show ${tipo}`;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
