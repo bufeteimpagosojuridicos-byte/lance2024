@@ -1071,11 +1071,8 @@ function cargarIncidencias() {
 
 function responderOperario(nombre) {
   var tel = getTel();
-  var msg = encodeURIComponent(
-    'OBRACONTROL PRO\n\nHola ' + nombre + ', hemos recibido tu reporte.\n\nEstamos en ello, te respondemos pronto.\n\n_ObraControl Pro_'
-  );
-  var url = 'https://wa.me/' + tel + '?text=' + msg;
-  window.location.href = url;
+  var msg = 'OBRACONTROL PRO\n\nHola ' + nombre + ', hemos recibido tu reporte.\nEstamos en ello, te respondemos pronto.\n\nObraControl Pro';
+  abrirWA(tel, msg);
 }
 
 function resolverInc(btn) {
@@ -1140,23 +1137,27 @@ function mostrarPorObra() {
 
 // TELEFONO RESPONSABLE
 function saveTel() {
-  var tel = document.getElementById('tel-responsable').value.trim();
+  var el = document.getElementById('tel-responsable');
+  if (!el) return;
+  var tel = el.value.trim();
+  if (!tel) return;
   localStorage.setItem('ocp_tel_responsable', tel);
-  showToast('Telefono guardado: ' + tel, 'ok');
+  el.style.borderColor = 'rgba(37,211,102,.6)';
+  setTimeout(function() { el.style.borderColor = 'rgba(200,168,75,.25)'; }, 1500);
 }
 
 function getTel() {
   var tel = localStorage.getItem('ocp_tel_responsable') || '609321585';
-  // Limpiar espacios, guiones, paréntesis
-  tel = tel.replace(/[\s\-\(\)]/g, '');
-  // Quitar el + si lo tiene
-  tel = tel.replace(/^\+/, '');
-  // Si empieza por 6, 7, 8, 9 (móvil español sin prefijo) añadir 34
-  if (/^[6789]/.test(tel) && tel.length === 9) {
-    tel = '34' + tel;
-  }
-  // Si ya empieza por 34 y tiene 11 dígitos, perfecto
+  tel = tel.replace(/[\s\-\(\)\+]/g, '');
+  if (/^[6789]/.test(tel) && tel.length === 9) tel = '34' + tel;
+  if (tel.length < 10) tel = '34609321585';
   return tel;
+}
+
+function loadTel() {
+  var saved = localStorage.getItem('ocp_tel_responsable');
+  var el = document.getElementById('tel-responsable');
+  if (saved && el) el.value = saved;
 }
 
 function loadTel() {
@@ -1170,8 +1171,17 @@ function probarWA() {
   saveTel();
   var tel = getTel();
   if (!tel) { showToast('Escribe un telefono primero', 'err'); return; }
-  var msg = encodeURIComponent('OBRACONTROL PRO\n\nPrueba de conexion. El sistema de alertas esta funcionando correctamente.');
-  window.location.href = 'https://wa.me/' + tel + '?text=' + msg;
+  var msg = encodeURIComponent('OBRACONTROL PRO - Prueba de conexion. Sistema funcionando correctamente.');
+  showToast('Abriendo WhatsApp...', 'ok');
+  setTimeout(function() {
+    window.open('https://wa.me/' + tel + '?text=' + msg, '_blank');
+  }, 300);
+}
+
+function abrirWA(tel, msg) {
+  var url = 'https://wa.me/' + tel + '?text=' + encodeURIComponent(msg);
+  showToast('Abriendo WhatsApp...', 'ok');
+  setTimeout(function() { window.open(url, '_blank'); }, 300);
 }
 
 var toastTimer;
