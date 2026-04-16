@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ObraControl Pro — Operario</title>
+<meta name="application-name" content="ObraControl Pro">
+<meta name="apple-mobile-web-app-title" content="ObraControl Pro">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0A3D2E">
+<link rel="manifest" href="manifest.json">
+<!-- Icono SVG inline como favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230A3D2E'/%3E%3Ccircle cx='50' cy='58' r='14' fill='%23C8A84B'/%3E%3Cpath d='M50 72 L44 88 L50 84 L56 88 Z' fill='%23C8A84B'/%3E%3Ccircle cx='50' cy='58' r='6' fill='%230A3D2E'/%3E%3Cpath d='M28 42 Q50 28 72 42' stroke='%23E2C36A' stroke-width='3' fill='none' stroke-linecap='round' opacity='.9'/%3E%3Cpath d='M18 32 Q50 14 82 32' stroke='%23E2C36A' stroke-width='2.5' fill='none' stroke-linecap='round' opacity='.6'/%3E%3Cpath d='M8 22 Q50 0 92 22' stroke='%23E2C36A' stroke-width='2' fill='none' stroke-linecap='round' opacity='.35'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -37,6 +45,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);max
 .lic-input::placeholder{color:rgba(200,168,75,.3);letter-spacing:1px;}
 .lic-msg{height:16px;font-size:11px;font-weight:700;color:var(--red);margin-bottom:10px;}
 .btn-activar{width:100%;padding:13px;background:var(--gold-grad);color:var(--verde);border:none;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;cursor:pointer;}
+
+/* ── RGPD ── */
+#rgpd-screen{position:fixed;inset:0;z-index:350;background:linear-gradient(160deg,#061A10 0%,#0A3D2E 60%,#061A10 100%);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+.rgpd-card{background:rgba(255,255,255,.06);border:1px solid rgba(200,168,75,.2);border-radius:20px;padding:24px 20px;width:100%;max-width:360px;text-align:center;backdrop-filter:blur(20px);}
+.rgpd-icon{font-size:40px;margin-bottom:10px;}
+.rgpd-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--oro2);margin-bottom:6px;}
+.rgpd-sub{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:16px;line-height:1.5;}
+.rgpd-item{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(200,168,75,.15);border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:left;}
+.rgpd-item-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.rgpd-item-title{font-size:11px;font-weight:700;color:var(--oro2);margin-bottom:2px;}
+.rgpd-item-text{font-size:10px;color:rgba(255,255,255,.5);line-height:1.4;}
+.rgpd-legal{font-size:9px;color:rgba(255,255,255,.3);margin:12px 0;line-height:1.4;}
+.btn-rgpd-ok{width:100%;padding:13px;background:var(--gold-grad);color:var(--verde);border:none;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;cursor:pointer;margin-bottom:8px;}
+.btn-rgpd-no{width:100%;padding:10px;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:10px;font-size:11px;color:rgba(255,255,255,.4);cursor:pointer;font-family:'DM Sans',sans-serif;}
 
 /* ── IDIOMAS ── */
 #lang-screen{position:fixed;inset:0;z-index:250;background:linear-gradient(160deg,#061A10 0%,#0A3D2E 60%,#061A10 100%);display:flex;align-items:center;justify-content:center;padding:24px;}
@@ -217,6 +239,54 @@ textarea.form-ctrl2{resize:none;min-height:40px;max-height:40px;}
 </style>
 </head>
 <body>
+
+<!-- PANTALLA RGPD -->
+<div id="rgpd-screen" style="display:none;">
+  <div class="rgpd-card">
+    <div class="rgpd-icon">🛡️</div>
+    <div class="rgpd-title">PRIVACIDAD Y DATOS</div>
+    <div class="rgpd-sub">Antes de continuar necesitamos tu consentimiento sobre cómo usamos tus datos.</div>
+
+    <div class="rgpd-item">
+      <div class="rgpd-item-icon">📍</div>
+      <div>
+        <div class="rgpd-item-title">Localización GPS</div>
+        <div class="rgpd-item-text">Usamos tu ubicación GPS <strong style="color:rgba(255,255,255,.7)">únicamente durante el fichaje</strong> para registrar que estás en la obra asignada. No rastreamos tu posición fuera del horario laboral.</div>
+      </div>
+    </div>
+
+    <div class="rgpd-item">
+      <div class="rgpd-item-icon">👤</div>
+      <div>
+        <div class="rgpd-item-title">Datos personales</div>
+        <div class="rgpd-item-text">Tu DNI/NIE, nombre y PIN se usan <strong style="color:rgba(255,255,255,.7)">exclusivamente para identificarte</strong> en el sistema de control de presencia de tu empresa.</div>
+      </div>
+    </div>
+
+    <div class="rgpd-item">
+      <div class="rgpd-item-icon">📷</div>
+      <div>
+        <div class="rgpd-item-title">Cámara (opcional)</div>
+        <div class="rgpd-item-text">Solo se usa si decides adjuntar una foto a una incidencia. <strong style="color:rgba(255,255,255,.7)">Nunca se accede a la cámara sin tu permiso explícito.</strong></div>
+      </div>
+    </div>
+
+    <div class="rgpd-item">
+      <div class="rgpd-item-icon">🔒</div>
+      <div>
+        <div class="rgpd-item-title">Almacenamiento seguro</div>
+        <div class="rgpd-item-text">Todos los datos se almacenan en servidores seguros de Google Firebase en la <strong style="color:rgba(255,255,255,.7)">Unión Europea (Bélgica)</strong>, cumpliendo con el RGPD.</div>
+      </div>
+    </div>
+
+    <div class="rgpd-legal">
+      De conformidad con el <strong style="color:rgba(255,255,255,.4)">Reglamento (UE) 2016/679 (RGPD)</strong> y la <strong style="color:rgba(255,255,255,.4)">Ley Orgánica 3/2018 (LOPDGDD)</strong>. Responsable del tratamiento: tu empresa contratante. Encargado: Construcciones Lance 2024 SL · info@obracontrolgps.net
+    </div>
+
+    <button class="btn-rgpd-ok" onclick="aceptarRGPD()">✅ ACEPTO Y CONTINUAR</button>
+    <button class="btn-rgpd-no" onclick="rechazarRGPD()">No acepto — no puedo usar la app</button>
+  </div>
+</div>
 
 <!-- PANTALLA BLOQUEADA -->
 <div id="blocked-screen">
@@ -524,6 +594,31 @@ textarea.form-ctrl2{resize:none;min-height:40px;max-height:40px;}
 const FB_URL = 'https://obracontroldemo-default-rtdb.europe-west1.firebasedatabase.app';
 const FB_URL_LIC = 'https://obracontroldemo-default-rtdb.europe-west1.firebasedatabase.app';
 const DEMO_CLAVE = 'BA49159567EFC254';
+
+// ── RGPD ──
+function checkRGPD(){
+  const aceptado = localStorage.getItem('ocp_rgpd');
+  if(aceptado === 'si'){
+    checkLicencia();
+  } else {
+    document.getElementById('rgpd-screen').style.display='flex';
+  }
+}
+
+function aceptarRGPD(){
+  localStorage.setItem('ocp_rgpd','si');
+  document.getElementById('rgpd-screen').style.display='none';
+  checkLicencia();
+}
+
+function rechazarRGPD(){
+  document.getElementById('rgpd-screen').innerHTML=`
+    <div class="rgpd-card" style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:12px;">🔒</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--oro2);margin-bottom:10px;">ACCESO NO DISPONIBLE</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;">Sin aceptar el tratamiento de datos no es posible usar esta aplicación.<br><br>Contacta con tu encargado si tienes dudas.</div>
+    </div>`;
+}
 
 // ── LICENCIA ──
 function checkLicencia(){
@@ -875,6 +970,8 @@ function borrarFoto(){
   document.getElementById('inc-foto').value = '';
   document.getElementById('foto-preview').style.display = 'none';
 }
+const ENCARGADO_INCIDENCIAS = '34609321585';
+
 function enviarIncidencia(){
   if(!motivoSeleccionado){ showToast('Selecciona un motivo primero','err'); return; }
   const desc = document.getElementById('inc-desc').value.trim();
@@ -899,6 +996,18 @@ function enviarIncidencia(){
       motivoSeleccionado='';
       borrarFoto();
       showToast('📤 Incidencia enviada al encargado','ok');
+      // Notificar por WhatsApp al encargado
+      const waMsg = encodeURIComponent(
+        `🚨 *INCIDENCIA — ObraControl Pro*\n\n`+
+        `👷 Operario: *${inc.operario}*\n`+
+        `📋 Motivo: *${inc.tipo}*\n`+
+        `📝 Descripción: ${inc.desc}\n`+
+        `🕐 Hora: ${inc.hora} · ${inc.fecha}\n\n`+
+        `_ObraControl Pro · Construcciones Lance 2024 SL_`
+      );
+      setTimeout(()=>{
+        window.open(`https://wa.me/${ENCARGADO_INCIDENCIAS}?text=${waMsg}`,'_blank');
+      }, 800);
     }).catch(()=>showToast('⚠️ Error al enviar','err'));
 }
 
@@ -1061,7 +1170,7 @@ function showLogin(){
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
-  checkLicencia();
+  checkRGPD();
 });
 document.getElementById('l-pin').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
 </script>
